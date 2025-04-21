@@ -15,6 +15,7 @@ ENV/
 
 # VS Code settings
 .vscode/
+jenkins/
 
 # macOS files
 .DS_Store

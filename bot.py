@@ -215,7 +215,7 @@ async def payment_method(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"\nСумма: {total}€\n"
         f"------------------------------\n"
         f"Оплата: {context.user_data['payment']}\n"
-        f"Адрес: {context.user_data.get('address', 'Самовывоз')}\n"
+        f"Адрес: {context.user_data.get('address', 'Valencia 46019 Carrer de Domènec Gómez 9')}\n"
         f"Телефон: {context.user_data['phone']}\n"
         f"Готовность: {pickup_text}"
     )
