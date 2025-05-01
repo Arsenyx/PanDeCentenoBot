@@ -13,17 +13,38 @@ ORDER_CONFIRMATION = 3
 
 app = Application.builder().token(TOKEN).build()
 
+# conv_handler = ConversationHandler(
+#     entry_points=[CommandHandler("start", start),
+#                   MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
+#     states={
+#         CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],
+#         CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],
+#         ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]
+#     },
+#     fallbacks=[CommandHandler("cancel", cancel)],
+#     allow_reentry=True
+# )
+
 conv_handler = ConversationHandler(
-    entry_points=[CommandHandler("start", start),
-                  MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
+    entry_points=[CommandHandler("start", start)],
     states={
-        CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],
-        CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],
-        ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]
+        0: [
+            MessageHandler(filters.Regex("^Сделать заказ"), show_breads),  # Пример шага
+            MessageHandler(filters.Regex("^Меню"), show_menu),
+            MessageHandler(filters.Regex("^Помощь"), help_command),
+        ],
+        1: [
+            CallbackQueryHandler(handle_bread_selection),
+            CallbackQueryHandler(handle_quantity_selection),
+        ],
+        2: [
+            # следующий шаг для оформления заказа
+        ],
     },
     fallbacks=[CommandHandler("cancel", cancel)],
     allow_reentry=True
 )
+
 
 app.add_handler(conv_handler)
 app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))
