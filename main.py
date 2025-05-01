@@ -1,5 +1,5 @@
 # Conversation states
-MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER = range(4)
+# MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER = range(4)
 
 from telegram import (
     Update,
@@ -33,6 +33,17 @@ from utils.address_validation import validate_location
 from utils.localy_setup import set_language
 from utils.delivery_time import get_delivery_time
 from utils.address_validation import get_phone, payment_method
+from config import TOKEN
+from states import (
+    MAIN_MENU,
+    SELECT_BREAD,
+    SELECT_QUANTITY,
+    CONFIRM_ORDER
+)
+from keyboards.bread_keyboard import bread_keyboard
+from keyboards.quantity_keyboard import quantity_keyboard
+from keyboards.main_keyboard import main_keyboard
+from keyboards.main_keyboard import main_keyboard   
 
 async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Пожалуйста, выберите опцию из меню.")
