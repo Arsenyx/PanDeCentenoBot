@@ -1,6 +1,3 @@
-# Conversation states
-# MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER = range(4)
-
 from telegram import (
     Update,
     InlineKeyboardMarkup,
@@ -15,8 +12,8 @@ from telegram.ext import (
     ContextTypes,
     filters
 )
-# from config import TOKEN, MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
 
+# Импортируем обработчики из других файлов
 from handlers.start import start
 from handlers.menu import show_menu
 from handlers.help import help_command
@@ -29,9 +26,9 @@ from handlers.order import (
     confirm_order
 )
 
-# from utils.address_validation import validate_location
-from utils.address_validation import validate_address
+from handlers.language import language_handlers  # Импортируем обработчики для смены языка
 
+from utils.address_validation import validate_address
 from utils.localy_setup import setup_locale
 from utils.delivery_time import get_delivery_time
 from utils.address_validation import get_phone, payment_method
@@ -45,14 +42,15 @@ from states import (
 from keyboards.bread_keyboard import bread_keyboard
 from keyboards.quantity_keyboard import quantity_keyboard
 from keyboards.main_keyboard import main_keyboard
-from keyboards.main_keyboard import main_keyboard   
 
+# Функция для обработки ошибок
 async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Пожалуйста, выберите опцию из меню.")
 
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
 
+    # Создаем ConversationHandler с вашими состояниями
     conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
         states={
@@ -71,6 +69,10 @@ def main():
         ]
     )
 
+    # Регистрируем обработчики для смены языка
+    app.add_handler(language_handlers())  # Добавляем обработчики для смены языка
+
+    # Другие обработчики команд
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", show_menu))
     app.add_handler(CommandHandler("help", help_command))

@@ -40,3 +40,10 @@ def set_language(update, context):
     # Отправляем сообщение с новым языком и обновленной клавиатурой
     query.edit_message_text(text=get_translation(language_code, 'change_language'))
     query.edit_message_reply_markup(reply_markup=updated_main_keyboard)  # Обновляем клавиатуру
+
+# Регистрация обработчиков
+def language_handlers():
+    return [
+        CallbackQueryHandler(change_language, pattern='^change_language$'),
+        CallbackQueryHandler(set_language, pattern='^set_language_.*$')
+    ]
