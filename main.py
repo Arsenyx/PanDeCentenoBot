@@ -1,37 +1,67 @@
-from telegram.ext import Application, CommandHandler, ConversationHandler, MessageHandler, CallbackQueryHandler, filters
-from config import TOKEN
+from telegram import (
+    Update,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    CallbackQueryHandler,
+    ConversationHandler,
+    ContextTypes,
+    filters
+)
+from config import TOKEN, MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
+
 from handlers.start import start
 from handlers.menu import show_menu
 from handlers.help import help_command
 from handlers.cancel import cancel
-from handlers.order import start_order, choose_bread, choose_quantity, confirm_order
 
-# Состояния
-CHOOSING_BREAD = 1
-CHOOSING_QUANTITY = 2
-ORDER_CONFIRMATION = 3
-
-app = Application.builder().token(TOKEN).build()
-
-# ConversationHandler
-conv_handler = ConversationHandler(
-    entry_points=[
-        CommandHandler("start", start),  # Обработчик для команды /start
-        CallbackQueryHandler(start_order, pattern="^make_order$")  # Обработчик для inline-кнопки "Сделать заказ"
-    ],
-    states={
-        CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern="^bread_")],  # Выбор хлеба
-        CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern="^\d$")],  # Выбор количества
-        ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern="^confirm_order$")]  # Подтверждение заказа
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],  # Отмена заказа
-    allow_reentry=True  # Разрешение на повторное подключение
+from handlers.order import (
+    start_order,
+    select_bread,
+    select_quantity,
+    confirm_order
 )
 
-# Добавляем обработчики
-app.add_handler(conv_handler)
-app.add_handler(MessageHandler(filters.Regex("^Меню$"), show_menu))  # Обработчик для кнопки "Меню"
-app.add_handler(MessageHandler(filters.Regex("^Помощь$"), help_command))  # Обработчик для кнопки "Помощь"
+from utils.address_validation import validate_location
+from utils.localy_setup import set_language
+from utils.delivery_time import get_delivery_time
+from utils.address_validation import get_phone, payment_method
+
+async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Пожалуйста, выберите опцию из меню.")
+
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
+        states={
+            SELECT_BREAD: [CallbackQueryHandler(select_bread)],
+            SELECT_QUANTITY: [CallbackQueryHandler(select_quantity)],
+            CONFIRM_ORDER: [CallbackQueryHandler(confirm_order)],
+            MAIN_MENU: [
+                MessageHandler(filters.LOCATION, validate_location),
+                MessageHandler(filters.CONTACT, get_phone),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, payment_method)
+            ],
+        },
+        fallbacks=[
+            CommandHandler("cancel", cancel),
+            MessageHandler(filters.TEXT, fallback)
+        ]
+    )
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("menu", show_menu))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(conv_handler)
+
+    print("Бот запущен...")
+    app.run_polling()
 
 if __name__ == "__main__":
-    app.run_polling()
+    main()

@@ -1,21 +1,15 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import logging
+from telegram import Update, ReplyKeyboardMarkup
+from telegram.ext import ContextTypes
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+from config import MAIN_MENU  # Состояние лучше хранить в config.py
 
-async def start(update, context):
-    logging.info("/start command called")
+main_keyboard = ReplyKeyboardMarkup([
+    ["Сделать заказ 🥯", "Меню 📋", "Помощь ❓"]
+], resize_keyboard=True)
 
-    # Создаем inline-кнопку для начала заказа
-    keyboard = [
-        [InlineKeyboardButton("Сделать заказ", callback_data="make_order")],  # Inline-кнопка с callback_data
-        [InlineKeyboardButton("Меню", callback_data="menu")],
-        [InlineKeyboardButton("Помощь", callback_data="help")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    # Отправляем приветственное сообщение с inline-кнопками
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Добро пожаловать! Выберите действие:",
-        reply_markup=reply_markup
+        "Добро пожаловать в хлебную лавку! 🥯\nВыберите действие:",
+        reply_markup=main_keyboard
     )
+    return MAIN_MENU
