@@ -1,3 +1,6 @@
+# Conversation states
+MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER = range(4)
+
 from telegram import (
     Update,
     InlineKeyboardMarkup,
