@@ -18,6 +18,13 @@ async def start_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()  # Ответить на callback-запрос
 
+    logging.info(f"Received callback data: {query.data}")
+
+    # Проверяем, что callback_data совпадает с ожидаемым значением
+    if query.data != "make_order":
+        logging.error(f"Unexpected callback data: {query.data}")
+        return ConversationHandler.END
+
     logging.info("start_order called")
 
     # Отправляем сообщение с клавиатурой для выбора хлеба
