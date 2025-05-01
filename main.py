@@ -18,15 +18,13 @@ from handlers.start import start
 from handlers.menu import show_menu
 from handlers.help import help_command
 from handlers.cancel import cancel
-
+from handlers.language import language_handlers  # Импортируем обработчики для смены языка
 from handlers.order import (
     start_order,
     select_bread,
     select_quantity,
     confirm_order
 )
-
-from handlers.language import language_handlers  # Импортируем обработчики для смены языка
 
 from utils.address_validation import validate_address
 from utils.localy_setup import setup_locale
@@ -48,6 +46,7 @@ async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Пожалуйста, выберите опцию из меню.")
 
 def main():
+    # Создаем приложение
     app = ApplicationBuilder().token(TOKEN).build()
 
     # Создаем ConversationHandler с вашими состояниями
