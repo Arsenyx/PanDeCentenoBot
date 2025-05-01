@@ -53,3 +53,6 @@ dist/
 # Systemd temp files (optional)
 *.service
 
+# Old files & folders off the Project
+bot_old_version.py
+
