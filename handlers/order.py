@@ -11,35 +11,36 @@ ORDER_CONFIRMATION = 3
 
 # Функция для начала заказа
 async def start_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Отправляем сообщение с клавиатурой для выбора хлеба
     await update.message.reply_text("Выберите хлеб:", reply_markup=bread_keyboard)
-    return CHOOSING_BREAD
+    return CHOOSING_BREAD  # Переход к следующему состоянию
 
 # Обработчик для выбора хлеба
 async def choose_bread(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    selected_bread = query.data.split('_')[1]
-    context.user_data['bread'] = selected_bread  # Сохраняем выбор пользователя
+    selected_bread = query.data.split('_')[1]  # Извлекаем выбор хлеба
+    context.user_data['bread'] = selected_bread  # Сохраняем выбор
 
-    # Отправляем кнопки для выбора количества
+    # Отправляем сообщение с предложением выбрать количество
     await query.edit_message_text(f"Вы выбрали {selected_bread}. Сколько буханок хотите?")
     await query.message.reply_text("Выберите количество:", reply_markup=quantity_keyboard)
-    return CHOOSING_QUANTITY
+    return CHOOSING_QUANTITY  # Переход к следующему состоянию
 
 # Обработчик для выбора количества
 async def choose_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    quantity = int(query.data)  # Получаем количество
+    quantity = int(query.data)  # Получаем выбранное количество
 
     bread = context.user_data['bread']  # Получаем выбранный хлеб
     context.user_data['quantity'] = quantity  # Сохраняем количество
 
-    # Отправляем кнопку для подтверждения заказа
+    # Вычисляем общую сумму
     total_price = BREADS[bread] * quantity
     await query.edit_message_text(f"Вы выбрали {quantity} буханок {bread}. Общая сумма: {total_price}€. Подтвердите заказ.")
     await query.message.reply_text("Оформить заказ?", reply_markup=InlineKeyboardMarkup([
         [InlineKeyboardButton("Оформить заказ", callback_data="confirm_order")]
     ]))
-    return ORDER_CONFIRMATION
+    return ORDER_CONFIRMATION  # Переход к следующему состоянию
 
 # Подтверждение заказа
 async def confirm_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -53,4 +54,5 @@ async def confirm_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Завершаем заказ
     # Здесь можно добавить отправку сообщения владельцу или сохранить заказ в базе данных
-    return ConversationHandler.END
+
+    return ConversationHandler.END  # Завершаем разговор
