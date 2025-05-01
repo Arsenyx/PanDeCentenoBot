@@ -32,7 +32,7 @@ from handlers.order import (
 # from utils.address_validation import validate_location
 from utils.address_validation import validate_address
 
-from utils.localy_setup import set_language
+from utils.localy_setup import setup_locale
 from utils.delivery_time import get_delivery_time
 from utils.address_validation import get_phone, payment_method
 from config import TOKEN
