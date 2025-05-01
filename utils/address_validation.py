@@ -13,3 +13,11 @@ def validate_address(address: str) -> bool:
     except Exception as e:
         print(f"Error validating address: {e}")
         return False
+
+# Добавляем заглушку для get_phone
+def get_phone(text: str) -> str:
+    # Пример простой очистки телефона от пробелов и символов
+    return ''.join(filter(str.isdigit, text))
+
+# Добавляем список методов оплаты
+payment_method = ['cash', 'card']
