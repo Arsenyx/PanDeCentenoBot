@@ -15,21 +15,24 @@ app = Application.builder().token(TOKEN).build()
 
 # ConversationHandler
 conv_handler = ConversationHandler(
-    entry_points=[CommandHandler("start", start),
-                  MessageHandler(filters.Regex("^Сделать заказ"), start_order)],  # Запуск процесса заказа
+    entry_points=[
+        CommandHandler("start", start),
+        CallbackQueryHandler(start_order, pattern="^make_order$")  # Обработчик для inline-кнопки "Сделать заказ"
+    ],
     states={
-        CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],  # Обработчик для выбора хлеба
-        CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],  # Обработчик для выбора количества
-        ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]  # Подтверждение заказа
+        CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern="^bread_")],  # Выбор хлеба
+        CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern="^\d$")],  # Выбор количества
+        ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern="^confirm_order$")]  # Подтверждение заказа
     },
-    fallbacks=[CommandHandler("cancel", cancel)],  # Обработчик для отмены
+    fallbacks=[CommandHandler("cancel", cancel)],  # Отмена заказа
     allow_reentry=True  # Разрешение на повторное подключение
 )
 
 # Добавляем обработчики
 app.add_handler(conv_handler)
-app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))  # Обработчик для "Меню"
-app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))  # Обработчик для "Помощь"
+app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))  # Обработчик для кнопки "Меню"
+app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))  # Обработчик для кнопки "Помощь"
 
 if __name__ == "__main__":
     app.run_polling()
+    
