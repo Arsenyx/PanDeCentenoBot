@@ -30,8 +30,8 @@ conv_handler = ConversationHandler(
 
 # Добавляем обработчики
 app.add_handler(conv_handler)
-app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))  # Обработчик для кнопки "Меню"
-app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))  # Обработчик для кнопки "Помощь"
+app.add_handler(MessageHandler(filters.Regex("^Меню$"), show_menu))  # Обработчик для кнопки "Меню"
+app.add_handler(MessageHandler(filters.Regex("^Помощь$"), help_command))  # Обработчик для кнопки "Помощь"
 
 if __name__ == "__main__":
     app.run_polling()
