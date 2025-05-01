@@ -2,7 +2,7 @@
 from telegram.ext import CallbackQueryHandler
 from utils.localization import get_translation
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from keyboards.main_keyboard import main_keyboard  # Импортируем основную клавиатуру
+# from keyboards.main_keyboard import main_keyboard  # Импортируем основную клавиатуру
 from keyboards.main_keyboard import get_main_keyboard
 
 
