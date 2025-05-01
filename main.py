@@ -13,42 +13,77 @@ ORDER_CONFIRMATION = 3
 
 app = Application.builder().token(TOKEN).build()
 
+# ConversationHandler
+conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("start", start),
+                  MessageHandler(filters.Regex("^Сделать заказ"), start_order)],  # Убедитесь, что здесь у вас правильная функция
+    states={
+        CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],  # Обработчик для выбора хлеба
+        CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],  # Обработчик для выбора количества
+        ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]  # Обработчик для подтверждения заказа
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],  # Обработчик для отмены
+    allow_reentry=True  # Разрешение на повторное подключение
+)
+
+app.add_handler(conv_handler)
+app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))  # Обработчик для "Меню"
+app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))  # Обработчик для "Помощь"
+
+if __name__ == "__main__":
+    app.run_polling()
+
+# from telegram.ext import Application, CommandHandler, ConversationHandler, MessageHandler, CallbackQueryHandler, filters
+# from config import TOKEN
+# from handlers.start import start
+# from handlers.menu import show_menu
+# from handlers.help import help_command
+# from handlers.cancel import cancel
+# from handlers.order import start_order, choose_bread, choose_quantity, confirm_order
+
+# # Состояния
+# CHOOSING_BREAD = 1
+# CHOOSING_QUANTITY = 2
+# ORDER_CONFIRMATION = 3
+
+# app = Application.builder().token(TOKEN).build()
+
+# # conv_handler = ConversationHandler(
+# #     entry_points=[CommandHandler("start", start),
+# #                   MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
+# #     states={
+# #         CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],
+# #         CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],
+# #         ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]
+# #     },
+# #     fallbacks=[CommandHandler("cancel", cancel)],
+# #     allow_reentry=True
+# # )
+
 # conv_handler = ConversationHandler(
-#     entry_points=[CommandHandler("start", start),
-#                   MessageHandler(filters.Regex("^Сделать заказ"), start_order)],
+#     entry_points=[CommandHandler("start", start)],
 #     states={
-#         CHOOSING_BREAD: [CallbackQueryHandler(choose_bread, pattern='^bread_')],
-#         CHOOSING_QUANTITY: [CallbackQueryHandler(choose_quantity, pattern='^\d$')],
-#         ORDER_CONFIRMATION: [CallbackQueryHandler(confirm_order, pattern='^confirm_order$')]
+#         0: [
+#             MessageHandler(filters.Regex("^Сделать заказ"), show_breads),  # Пример шага
+#             MessageHandler(filters.Regex("^Меню"), show_menu),
+#             MessageHandler(filters.Regex("^Помощь"), help_command),
+#         ],
+#         1: [
+#             CallbackQueryHandler(handle_bread_selection),
+#             CallbackQueryHandler(handle_quantity_selection),
+#         ],
+#         2: [
+#             # следующий шаг для оформления заказа
+#         ],
 #     },
 #     fallbacks=[CommandHandler("cancel", cancel)],
 #     allow_reentry=True
 # )
 
-conv_handler = ConversationHandler(
-    entry_points=[CommandHandler("start", start)],
-    states={
-        0: [
-            MessageHandler(filters.Regex("^Сделать заказ"), show_breads),  # Пример шага
-            MessageHandler(filters.Regex("^Меню"), show_menu),
-            MessageHandler(filters.Regex("^Помощь"), help_command),
-        ],
-        1: [
-            CallbackQueryHandler(handle_bread_selection),
-            CallbackQueryHandler(handle_quantity_selection),
-        ],
-        2: [
-            # следующий шаг для оформления заказа
-        ],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-    allow_reentry=True
-)
 
+# app.add_handler(conv_handler)
+# app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))
+# app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))
 
-app.add_handler(conv_handler)
-app.add_handler(MessageHandler(filters.Regex("^Меню"), show_menu))
-app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))
-
-if __name__ == "__main__":
-    app.run_polling()
+# if __name__ == "__main__":
+#     app.run_polling()
