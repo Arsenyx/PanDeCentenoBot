@@ -16,7 +16,7 @@ app = Application.builder().token(TOKEN).build()
 # ConversationHandler
 conv_handler = ConversationHandler(
     entry_points=[
-        CommandHandler("start", start),
+        CommandHandler("start", start),  # Обработчик для команды /start
         CallbackQueryHandler(start_order, pattern="^make_order$")  # Обработчик для inline-кнопки "Сделать заказ"
     ],
     states={
@@ -35,4 +35,3 @@ app.add_handler(MessageHandler(filters.Regex("^Помощь"), help_command))  #
 
 if __name__ == "__main__":
     app.run_polling()
-    
