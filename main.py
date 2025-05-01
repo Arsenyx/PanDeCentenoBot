@@ -29,7 +29,9 @@ from handlers.order import (
     confirm_order
 )
 
-from utils.address_validation import validate_location
+# from utils.address_validation import validate_location
+from utils.address_validation import validate_address
+
 from utils.localy_setup import set_language
 from utils.delivery_time import get_delivery_time
 from utils.address_validation import get_phone, payment_method
@@ -58,7 +60,7 @@ def main():
             SELECT_QUANTITY: [CallbackQueryHandler(select_quantity)],
             CONFIRM_ORDER: [CallbackQueryHandler(confirm_order)],
             MAIN_MENU: [
-                MessageHandler(filters.LOCATION, validate_location),
+                MessageHandler(filters.LOCATION, validate_address),
                 MessageHandler(filters.CONTACT, get_phone),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, payment_method)
             ],
