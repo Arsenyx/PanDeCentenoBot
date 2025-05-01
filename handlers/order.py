@@ -7,7 +7,9 @@ from keyboards.quantity_keyboard import quantity_keyboard
 from keyboards.bread_keyboard import bread_keyboard
 
 # Импортируем состояния из main.py
-from main import MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER, GET_PHONE
+# from main import MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER, GET_PHONE
+from states import MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER, GET_PHONE
+
 
 async def start_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['cart'] = {}
