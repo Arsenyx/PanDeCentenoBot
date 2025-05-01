@@ -1,7 +1,9 @@
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
 
-from config import MAIN_MENU  # Состояние лучше хранить в config.py
+# from config import MAIN_MENU  # Состояние лучше хранить в config.py
+from states import MAIN_MENU
+
 
 main_keyboard = ReplyKeyboardMarkup([
     ["Сделать заказ 🥯", "Меню 📋", "Помощь ❓"]
