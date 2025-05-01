@@ -18,6 +18,7 @@ async def start_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()  # Ответить на callback-запрос
 
+    # Логируем полученные данные
     logging.info(f"Received callback data: {query.data}")
 
     # Проверяем, что callback_data совпадает с ожидаемым значением
@@ -80,6 +81,4 @@ async def confirm_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(f"Ваш заказ: {quantity} буханок {bread}. Общая сумма: {price}€. Заказ оформлен!")
 
     # Завершаем заказ
-    # Здесь можно добавить отправку сообщения владельцу или сохранить заказ в базе данных
-
     return ConversationHandler.END  # Завершаем разговор
