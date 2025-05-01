@@ -13,3 +13,8 @@ def round_to_delivery_window(dt):
     elif dt > delivery_end:
         return (dt + timedelta(days=1)).replace(hour=start_hour)
     return dt
+
+def get_delivery_time(cart):
+    ready_time = calculate_ready_time(cart)
+    delivery_time = round_to_delivery_window(ready_time)
+    return delivery_time.strftime('%d.%m.%Y %H:%M')
