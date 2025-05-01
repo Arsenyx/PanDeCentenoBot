@@ -30,3 +30,9 @@ LANGUAGES = {
 def get_translation(language_code, key):
     # Если для указанного языка есть перевод, возвращаем его, иначе перевод на русский (по умолчанию)
     return LANGUAGES.get(language_code, LANGUAGES['ru']).get(key, key)
+
+def detect_language_code(update) -> str:
+    """Определяет язык пользователя по Telegram-данным"""
+    if update and update.effective_user:
+        return update.effective_user.language_code or 'ru'
+    return 'ru'
