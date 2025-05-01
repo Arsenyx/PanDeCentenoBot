@@ -15,7 +15,7 @@ from telegram.ext import (
     ContextTypes,
     filters
 )
-from config import TOKEN, MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
+# from config import TOKEN, MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
 
 from handlers.start import start
 from handlers.menu import show_menu
