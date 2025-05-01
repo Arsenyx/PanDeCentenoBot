@@ -68,7 +68,7 @@ from config import TOKEN
 from states import MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
 from keyboards.bread_keyboard import bread_keyboard
 from keyboards.quantity_keyboard import quantity_keyboard
-from keyboards.main_keyboard import main_keyboard
+from keyboards.main_keyboard import get_main_keyboard
 
 # Функция для обработки ошибок
 async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
