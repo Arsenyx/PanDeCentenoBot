@@ -20,7 +20,7 @@ from config import TOKEN
 from states import MAIN_MENU, SELECT_BREAD, SELECT_QUANTITY, CONFIRM_ORDER
 
 
-# Функция для обработки непредусмотренных сообщений
+# Функция для обработки неизвестных сообщений
 async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Пожалуйста, выберите опцию из меню.")
 
@@ -28,28 +28,25 @@ async def fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
 
-    # Обработка команды /start
+    # Команды
     app.add_handler(CommandHandler("start", start))
-
-    # Обработка команды /menu
     app.add_handler(CommandHandler("menu", show_menu))
-
-    # Обработка команды /help
     app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("cancel", cancel))
 
-    # Обработка текстовой кнопки "🌐 Язык" с ReplyKeyboard
-    app.add_handler(MessageHandler(
-        filters.Regex("^(🌐 Язык|🌐 Idioma|🌐 Language|🌐 Sprache)$"),
-        change_language
-    ))
+    # Обработка текстовых кнопок ReplyKeyboardMarkup
+    app.add_handler(MessageHandler(filters.Regex("^(📋 Меню|📋 Menú|📋 Menu|📋 Menü)$"), show_menu))
+    app.add_handler(MessageHandler(filters.Regex("^(ℹ️ Помощь|ℹ️ Ayuda|ℹ️ Help|ℹ️ Hilfe)$"), help_command))
+    app.add_handler(MessageHandler(filters.Regex("^(🛒 Сделать заказ|🛒 Hacer pedido|🛒 Make order|🛒 Bestellung)$"), start_order))
+    app.add_handler(MessageHandler(filters.Regex("^(🌐 Язык|🌐 Idioma|🌐 Language|🌐 Sprache)$"), change_language))
 
-    # Регистрируем inline-обработчики языков (CallbackQueryHandler)
+    # Обработка inline-кнопок (CallbackQuery)
     for handler in language_handlers():
         app.add_handler(handler)
 
-    # Обработка заказов (ConversationHandler)
+    # Обработка заказа (этапы выбора)
     conv_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^Сделать заказ$"), start_order)],
+        entry_points=[MessageHandler(filters.Regex("^(🛒 Сделать заказ|🛒 Hacer pedido|🛒 Make order|🛒 Bestellung)$"), start_order)],
         states={
             SELECT_BREAD: [CallbackQueryHandler(select_bread)],
             SELECT_QUANTITY: [CallbackQueryHandler(select_quantity)],
