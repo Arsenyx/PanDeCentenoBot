@@ -1,17 +1,12 @@
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update
 from telegram.ext import ContextTypes
-
-# from config import MAIN_MENU  # Состояние лучше хранить в config.py
-from states import MAIN_MENU
-
-
-main_keyboard = ReplyKeyboardMarkup([
-    ["Сделать заказ 🥯", "Меню 📋", "Помощь ❓"]
-], resize_keyboard=True)
+from keyboards.main_keyboard import get_main_keyboard
+from utils.localization import detect_language_code  # если есть
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    language_code = detect_language_code(update) if callable(detect_language_code) else 'ru'
     await update.message.reply_text(
-        "Добро пожаловать в хлебную лавку! 🥯\nВыберите действие:",
-        reply_markup=main_keyboard
+        "Добро пожаловать! Выберите действие:",
+        reply_markup=get_main_keyboard(language_code)
     )
-    return MAIN_MENU
+

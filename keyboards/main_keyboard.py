@@ -1,16 +1,10 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from utils.localization import get_translation  # Импортируем функцию для локализации
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 
-def get_main_keyboard(language_code='ru'):
-    """Функция для создания клавиатуры с учётом выбранного языка"""
-    return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(get_translation(language_code, 'order'), callback_data="order"),
-            InlineKeyboardButton(get_translation(language_code, 'menu'), callback_data="menu"),
-        ],
-        [
-            InlineKeyboardButton(get_translation(language_code, 'help'), callback_data="help"),
-            InlineKeyboardButton(get_translation(language_code, 'change_language'), callback_data="change_language")
-        ]
-    ])
+def get_main_keyboard(language_code="ru"):
+    if language_code == "es":
+        buttons = [["📋 Menú", "ℹ️ Ayuda"], ["🛒 Hacer pedido", "🌐 Idioma"]]
+    else:
+        buttons = [["📋 Меню", "ℹ️ Помощь"], ["🛒 Сделать заказ", "🌐 Язык"]]
+
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
