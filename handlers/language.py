@@ -1,49 +1,49 @@
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton  # Добавляем импорт
-from telegram.ext import CallbackQueryHandler
-from utils.localization import get_translation
-from keyboards.main_keyboard import get_main_keyboard  # Импортируем функцию для основной клавиатуры
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes
+from keyboards.main_keyboard import get_main_keyboard
 
-# Функция для смены языка
-def change_language(update, context):
-    query = update.callback_query
-    query.answer()  # Уведомляем Telegram о том, что запрос обработан
+# Промежуточное хранилище языков по user_id
+user_languages = {}
 
-    # Получаем текущий язык пользователя, если он есть
-    user_language = context.user_data.get('language', 'ru')  # по умолчанию 'ru'
-
-    # Кнопки для выбора языка
-    language_keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton(get_translation('ru', 'order'), callback_data="set_language_ru")],
-        [InlineKeyboardButton(get_translation('es', 'order'), callback_data="set_language_es")],
-        [InlineKeyboardButton(get_translation('en', 'order'), callback_data="set_language_en")],
-        [InlineKeyboardButton(get_translation('de', 'order'), callback_data="set_language_de")]
+def get_language_keyboard():
+    return InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🇷🇺 Русский", callback_data="lang_ru"),
+            InlineKeyboardButton("🇪🇸 Español", callback_data="lang_es")
+        ],
+        [
+            InlineKeyboardButton("🇩🇪 Deutsch", callback_data="lang_de"),
+            InlineKeyboardButton("🇬🇧 English", callback_data="lang_en")
+        ]
     ])
-    
-    # Отправляем сообщение с выбором языка
-    query.edit_message_text(
-        text=get_translation(user_language, 'change_language'),
-        reply_markup=language_keyboard
+
+async def choose_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Выберите язык / Elige idioma / Sprache wählen / Choose a language:",
+        reply_markup=get_language_keyboard()
     )
 
-# Функция для установки языка
-def set_language(update, context):
+async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    language_code = query.data.split("_")[2]  # Получаем код языка из callback_data
-    query.answer()
+    await query.answer()
 
-    # Сохраняем выбранный язык
-    context.user_data['language'] = language_code  # Сохраняем язык для пользователя
+    data = query.data
+    lang_map = {
+        "lang_ru": ("ru", "Язык установлен: Русский 🇷🇺"),
+        "lang_es": ("es", "Idioma establecido: Español 🇪🇸"),
+        "lang_de": ("de", "Sprache eingestellt: Deutsch 🇩🇪"),
+        "lang_en": ("en", "Language set to: English 🇬🇧")
+    }
 
-    # Обновляем клавиатуру в зависимости от выбранного языка
-    updated_main_keyboard = get_main_keyboard(language_code)  # Используем нашу функцию для обновленной клавиатуры
+    if data not in lang_map:
+        return
 
-    # Отправляем сообщение с новым языком и обновленной клавиатурой
-    query.edit_message_text(text=get_translation(language_code, 'change_language'))
-    query.edit_message_reply_markup(reply_markup=updated_main_keyboard)  # Обновляем клавиатуру
+    lang_code, confirmation_text = lang_map[data]
+    user_id = query.from_user.id
+    user_languages[user_id] = lang_code
 
-# Функция возвращает обработчики
-def language_handlers():
-    return [
-        CallbackQueryHandler(change_language, pattern='^change_language$'),
-        CallbackQueryHandler(set_language, pattern='^set_language_.*$')
-    ]
+    await query.edit_message_text(confirmation_text)
+    await query.message.reply_text(
+        "Главное меню обновлено:",
+        reply_markup=get_main_keyboard(lang_code)
+    )
